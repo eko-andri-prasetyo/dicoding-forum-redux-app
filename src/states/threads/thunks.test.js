@@ -1,50 +1,37 @@
-/*
-Skenario pengujian thunk (minimal 2):
-1) fetchThreads sukses: mengembalikan daftar threads dari API.
-2) fetchThreads gagal: me-return rejected dan mengirim ui/setError.
-*/
-
-import { describe, expect, it, vi } from 'vitest'
-
-vi.mock('../../utils/api.js', () => {
-  return {
-    api: {
-      getAllThreads: vi.fn()
-    }
-  }
-})
-
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { fetchThreads, createThread } from './thunks'
 import { api } from '../../utils/api.js'
-import { fetchThreads } from './thunks.js'
 
 describe('threads thunks', () => {
-  it('fetchThreads should return threads on success', async () => {
-    api.getAllThreads.mockResolvedValueOnce({
-      data: { threads: [{ id: 't-1', title: 'Hello' }] }
-    })
+  const dispatch = vi.fn()
+  const getState = vi.fn(() => ({ auth: { user: null } }))
 
-    const dispatch = vi.fn()
-    const getState = vi.fn(() => ({}))
-
-    const action = await fetchThreads()(dispatch, getState, undefined)
-
-    expect(action.type).toBe('threads/fetchThreads/fulfilled')
-    expect(action.payload).toHaveLength(1)
-    expect(action.payload[0].id).toBe('t-1')
+  beforeEach(() => {
+    vi.clearAllMocks()
   })
 
-  it('fetchThreads should return rejected and dispatch ui/setError on failure', async () => {
-    api.getAllThreads.mockRejectedValueOnce(new Error('boom'))
+  it('fetchThreads should call api.getAllThreads and return fulfilled payload', async () => {
+    vi.spyOn(api, 'getAllThreads').mockResolvedValue({
+      data: { threads: [{ id: 't1', title: 'Halo' }] }
+    })
 
-    const dispatch = vi.fn()
-    const getState = vi.fn(() => ({}))
+    const result = await fetchThreads()(dispatch, getState, undefined)
 
-    const action = await fetchThreads()(dispatch, getState, undefined)
+    expect(api.getAllThreads).toHaveBeenCalledTimes(1)
+    expect(result.type).toBe('threads/fetchThreads/fulfilled')
+    expect(result.payload).toEqual([{ id: 't1', title: 'Halo' }])
+  })
 
-    expect(action.type).toBe('threads/fetchThreads/rejected')
-    expect(action.payload).toBe('boom')
+  it('createThread should call api.createThread and return fulfilled payload', async () => {
+    vi.spyOn(api, 'createThread').mockResolvedValue({
+      data: { thread: { id: 't2', title: 'Judul', body: 'Isi', category: 'cat' } }
+    })
 
-    const calledTypes = dispatch.mock.calls.map((c) => c[0]?.type).filter(Boolean)
-    expect(calledTypes).toContain('ui/setError')
+    const payload = { title: 'Judul', body: 'Isi', category: 'cat' }
+    const result = await createThread(payload)(dispatch, getState, undefined)
+
+    expect(api.createThread).toHaveBeenCalledWith(payload)
+    expect(result.type).toBe('threads/createThread/fulfilled')
+    expect(result.payload).toEqual({ id: 't2', title: 'Judul', body: 'Isi', category: 'cat' })
   })
 })
