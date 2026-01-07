@@ -5,6 +5,8 @@ Skenario pengujian thunk (minimal 2):
 */
 
 import { describe, expect, it, vi } from 'vitest'
+import { api } from '../../utils/api.js'
+import { fetchThreads } from './thunks.js'
 
 vi.mock('../../utils/api.js', () => {
   return {
@@ -13,9 +15,6 @@ vi.mock('../../utils/api.js', () => {
     }
   }
 })
-
-import { api } from '../../utils/api.js'
-import { fetchThreads } from './thunks.js'
 
 describe('threads thunks', () => {
   it('fetchThreads should return threads on success', async () => {
