@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "message": "ok",
+  "data": {
+    "threads": [
+      {
+        "id": "thread-1",
+        "title": "Thread dari Cypress",
+        "body": "<p>Isi thread</p>",
+        "category": "cypress",
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "ownerId": "user-1",
+        "upVotesBy": [],
+        "downVotesBy": [],
+        "totalComments": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "message": "ok",
+  "data": {
+    "token": "test_token",
+    "user": {
+      "id": "user-1",
+      "name": "Cypress Tester",
+      "avatar": "https://ui-avatars.com/api/?name=Cypress"
+    }
+  }
+}
