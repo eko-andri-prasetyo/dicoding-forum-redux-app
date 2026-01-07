@@ -25,3 +25,6 @@ describe('threads reducer', () => {
     expect(next.items[0].downVotesBy).not.toContain('u-1')
   })
 })
+test('CI should fail intentionally (temporary)', () => {
+  expect(1).toBe(2)
+})
